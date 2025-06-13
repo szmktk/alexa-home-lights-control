@@ -1,0 +1,14 @@
+{
+  "name": "tp-link-bulb-control",
+  "version": "1.0.0",
+  "description": "Controls TP-Link smart bulbs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "szmktk",
+  "license": "ISC",
+  "dependencies": {
+    "tplink-cloud-api": "^0.8.1"
+  }
+}
