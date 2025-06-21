@@ -57,11 +57,16 @@ func trigger(monkeyKey string) {
 
 func main() {
 	brightnessFlag := flag.Int("brightness", 0, "Set brightness (10, 25, 50, 75, 100)")
-
+	bFlag := flag.Int("b", 0, "Alias for --brightness")
 	flag.Parse()
 
-	if *brightnessFlag != 0 {
-		key := fmt.Sprintf("brightness_%d", *brightnessFlag)
+	brightness := *brightnessFlag
+	if *bFlag != 0 {
+		brightness = *bFlag
+	}
+
+	if brightness != 0 {
+		key := fmt.Sprintf("brightness_%d", brightness)
 		trigger(key)
 	} else {
 		fmt.Println("Usage:")
