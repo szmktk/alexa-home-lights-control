@@ -7,8 +7,8 @@ import (
 	"os"
 )
 
-// TODO remove secret
-const voiceMonkeyToken = "hard_coded_token"
+// token can be set via -ldflags at compile time
+var builtInToken string
 
 var monkeys = map[string]string{
 	"brightness_10":  "kl110study10",
@@ -18,14 +18,27 @@ var monkeys = map[string]string{
 	"brightness_100": "kl110study100",
 }
 
+func getToken() string {
+	if builtInToken != "" {
+		return builtInToken
+	}
+	token := os.Getenv("VOICEMONKEY_TOKEN")
+	if token == "" {
+		fmt.Fprintln(os.Stderr, "❌ Error: VOICEMONKEY_TOKEN environment variable not set, and no token baked into the binary.")
+		os.Exit(1)
+	}
+	return token
+}
+
 func trigger(monkeyKey string) {
+	token := getToken()
 	monkeyName, exists := monkeys[monkeyKey]
 	if !exists {
 		fmt.Fprintf(os.Stderr, "❌ Unknown monkey key: %s\n", monkeyKey)
 		os.Exit(1)
 	}
 
-	url := fmt.Sprintf("https://api-v2.voicemonkey.io/trigger?token=%s&device=%s", voiceMonkeyToken, monkeyName)
+	url := fmt.Sprintf("https://api-v2.voicemonkey.io/trigger?token=%s&device=%s", token, monkeyName)
 
 	resp, err := http.Get(url)
 	if err != nil {
@@ -35,7 +48,7 @@ func trigger(monkeyKey string) {
 	defer resp.Body.Close()
 
 	if resp.StatusCode == http.StatusOK {
-		fmt.Printf("✅ Triggered routine: %s\n", monkeyKey)
+		fmt.Printf("✅ Triggered routine: %s\n", monkeyName)
 	} else {
 		fmt.Fprintf(os.Stderr, "❌ Failed: HTTP %d\n", resp.StatusCode)
 		os.Exit(1)
