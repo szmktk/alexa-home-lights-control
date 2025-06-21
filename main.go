@@ -7,15 +7,15 @@ import (
 	"os"
 )
 
-const voiceMonkeyToken = "YOUR_VOICEMONKEY_API_TOKEN"
+// TODO remove secret
+const voiceMonkeyToken = "hard_coded_token"
 
 var monkeys = map[string]string{
-	"on":             "your_monkey_name_for_on",
-	"off":            "your_monkey_name_for_off",
-	"brightness_25":  "your_monkey_name_for_25_brightness",
-	"brightness_50":  "your_monkey_name_for_50_brightness",
-	"brightness_75":  "your_monkey_name_for_75_brightness",
-	"brightness_100": "your_monkey_name_for_100_brightness",
+	"brightness_10":  "kl110study10",
+	"brightness_25":  "kl110study25",
+	"brightness_50":  "kl110study50",
+	"brightness_75":  "kl110study75",
+	"brightness_100": "kl110study100",
 }
 
 func trigger(monkeyKey string) {
@@ -25,7 +25,7 @@ func trigger(monkeyKey string) {
 		os.Exit(1)
 	}
 
-	url := fmt.Sprintf("https://api.voicemonkey.io/trigger?token=%s&monkey=%s", voiceMonkeyToken, monkeyName)
+	url := fmt.Sprintf("https://api-v2.voicemonkey.io/trigger?token=%s&device=%s", voiceMonkeyToken, monkeyName)
 
 	resp, err := http.Get(url)
 	if err != nil {
@@ -43,17 +43,11 @@ func trigger(monkeyKey string) {
 }
 
 func main() {
-	onFlag := flag.Bool("on", false, "Turn the light on")
-	offFlag := flag.Bool("off", false, "Turn the light off")
-	brightnessFlag := flag.Int("brightness", 0, "Set brightness (25, 50, 75, 100)")
+	brightnessFlag := flag.Int("brightness", 0, "Set brightness (10, 25, 50, 75, 100)")
 
 	flag.Parse()
 
-	if *onFlag {
-		trigger("on")
-	} else if *offFlag {
-		trigger("off")
-	} else if *brightnessFlag != 0 {
+	if *brightnessFlag != 0 {
 		key := fmt.Sprintf("brightness_%d", *brightnessFlag)
 		trigger(key)
 	} else {
